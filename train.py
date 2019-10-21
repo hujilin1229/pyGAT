@@ -129,8 +129,9 @@ if not os.path.exists(f'./saved_models/{args.dataset}/'):
 for epoch in range(args.epochs):
     loss_values.append(train(epoch))
 
-    torch.save(model.state_dict(), f'./saved_models/{args.dataset}/{epoch}.pkl')
+
     if loss_values[-1] < best:
+        torch.save(model.state_dict(), f'./saved_models/{args.dataset}/best.pkl')
         best = loss_values[-1]
         best_epoch = epoch
         bad_counter = 0
@@ -140,24 +141,24 @@ for epoch in range(args.epochs):
     if bad_counter == args.patience:
         break
 
-    files = glob.glob(f'./saved_models/{args.dataset}/*.pkl')
-    for file in files:
-        epoch_nb = int(file.split('.')[0])
-        if epoch_nb < best_epoch:
-            os.remove(file)
+    # files = glob.glob(f'./saved_models/{args.dataset}/*.pkl')
+    # for file in files:
+    #     epoch_nb = int(file.split('.')[0])
+    #     if epoch_nb < best_epoch:
+    #         os.remove(file)
 
-files = glob.glob(f'./saved_models/{args.dataset}/*.pkl')
-for file in files:
-    epoch_nb = int(file.split('.')[0])
-    if epoch_nb > best_epoch:
-        os.remove(file)
+# files = glob.glob(f'./saved_models/{args.dataset}/*.pkl')
+# for file in files:
+#     epoch_nb = int(file.split('.')[0])
+#     if epoch_nb > best_epoch:
+#         os.remove(file)
 
 print("Optimization Finished!")
 print("Total time elapsed: {:.4f}s".format(time.time() - t_total))
 
 # Restore best model
 print('Loading {}th epoch'.format(best_epoch))
-model.load_state_dict(torch.load(f'./saved_models/{args.dataset}/{best_epoch}.pkl'))
+model.load_state_dict(torch.load(f'./saved_models/{args.dataset}/best.pkl'))
 
 # Testing
 compute_test()
