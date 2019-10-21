@@ -48,6 +48,7 @@ if args.cuda:
 
 adj, features, labels, idx_train, idx_val, idx_test = load_data_ssl_image(args.data_dir, args.dataset)
 
+
 # Model and optimizer
 if args.sparse:
     model = SpGAT(nfeat=features.shape[1], 
