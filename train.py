@@ -13,7 +13,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.autograd import Variable
 
-from utils import load_data, accuracy
+from utils import load_data, accuracy, load_data_ssl_image
 from models import GAT, SpGAT
 
 # Training settings
@@ -31,6 +31,9 @@ parser.add_argument('--dropout', type=float, default=0.6, help='Dropout rate (1 
 parser.add_argument('--alpha', type=float, default=0.2, help='Alpha for the leaky_relu.')
 parser.add_argument('--patience', type=int, default=100, help='Patience')
 
+parser.add_argument('--dataset', type=str, default='cora', help='Which dataset to use ["cora", "citeseer", "Pubmed"]')
+parser.add_argument('--data_dir', type=str, default='./data/', help='Directory for data.')
+
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
 
@@ -41,7 +44,9 @@ if args.cuda:
     torch.cuda.manual_seed(args.seed)
 
 # Load data
-adj, features, labels, idx_train, idx_val, idx_test = load_data()
+# adj, features, labels, idx_train, idx_val, idx_test = load_data()
+
+adj, features, labels, idx_train, idx_val, idx_test = load_data_ssl_image(args.data_dir, args.dataset)
 
 # Model and optimizer
 if args.sparse:

@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.sparse as sp
 import torch
-
+import os
 
 def encode_onehot(labels):
     classes = set(labels)
@@ -45,6 +45,34 @@ def load_data(path="./data/cora/", dataset="cora"):
 
     return adj, features, labels, idx_train, idx_val, idx_test
 
+def load_data_ssl_image(data_path, data_name, num_labeled=1000, num_valid=1000):
+
+    # data_path = f'./{data_path}/{data_name}/'
+    data_path = os.path.join(data_path, data_name)
+    features = np.load(data_path + '/all_input.npy')
+    N = features.shape[0]
+    all_target_label = np.load(data_path + '/all_target.npy').astype(np.int)
+
+    idx_train = np.arange(num_labeled)
+    idx_val = np.arange(num_labeled, num_valid + num_labeled)
+    idx_test = np.arange(num_valid + num_labeled, N)
+
+    adj = sp.load_npz(data_path + '/adj.npz')
+    # build symmetric adjacency matrix
+    adj = adj + adj.T.multiply(adj.T > adj) - adj.multiply(adj.T > adj)
+    adj = normalize_adj(adj + sp.eye(adj.shape[0]))
+
+    adj = torch.FloatTensor(np.array(adj.todense()))
+    features = np.reshape(features, (N, -1))
+    features = torch.FloatTensor(features)
+    labels = torch.LongTensor(all_target_label)
+    # adj = sparse_mx_to_torch_sparse_tensor(adj)
+
+    idx_train = torch.LongTensor(idx_train)
+    idx_val = torch.LongTensor(idx_val)
+    idx_test = torch.LongTensor(idx_test)
+
+    return adj, features, labels, idx_train, idx_val, idx_test
 
 def normalize_adj(mx):
     """Row-normalize sparse matrix"""
