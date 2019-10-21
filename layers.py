@@ -103,6 +103,7 @@ class SpGraphAttentionLayer(nn.Module):
         edge = adj.nonzero().t()
 
         assert not torch.isnan(input).any()
+        assert not torch.isnan(self.W).any()
 
         h = torch.mm(input, self.W)
         # h: N x out
