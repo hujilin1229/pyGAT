@@ -60,6 +60,8 @@ def load_data_ssl_image(data_path, data_name, num_labeled=1000, num_valid=1000):
     adj = sp.load_npz(data_path + '/adj.npz')
     # build symmetric adjacency matrix
     adj = adj + adj.T.multiply(adj.T > adj) - adj.multiply(adj.T > adj)
+
+    features = normalize_features(features)
     adj = normalize_adj(adj + sp.eye(adj.shape[0]))
 
     adj = torch.FloatTensor(np.array(adj.todense()))
