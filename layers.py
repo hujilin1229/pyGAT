@@ -102,7 +102,7 @@ class SpGraphAttentionLayer(nn.Module):
         N = input.size()[0]
         edge = adj.nonzero().t()
 
-        self.W = torch.where(torch.isnan(self.W), torch.zeros_like(self.W), self.W)
+        # self.W = torch.where(torch.isnan(self.W), torch.zeros_like(self.W), self.W)
         # assert not torch.isnan(input).any()
         # assert not torch.isnan(self.W).any()
 
